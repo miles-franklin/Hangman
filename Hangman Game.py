@@ -1,12 +1,14 @@
 import random
 import string
-from words import words
+import json
 
 Life_Points = 6
 Win_Points = 0
 
 
-def get_valid_word(words):
+def get_valid_word(json_path="words.json"):
+    with open(json_path) as f:
+        words = json.load(f)["words"]
     word = random.choice(words)
 
     while '_' in word or ' ' in word:
@@ -15,10 +17,11 @@ def get_valid_word(words):
     return word
 
 
-def hangman_game():
+def hangman_game(verbose=False):
     global Life_Points
     global Win_Points
-    hidden_word = get_valid_word(words).upper()
+    
+    hidden_word = get_valid_word().upper()
     password = ['-'] * len(hidden_word)
     alphabet = set(string.ascii_uppercase)
     used_letters = set()
@@ -51,8 +54,12 @@ def hangman_game():
         else:
             print("You've already guessed this letter or it's not a valid letter.")
 
-        print(f"Life_Points:\t{Life_Points}")
-        print(f"Win_Points:\t{Win_Points}")
+        if verbose:
+            print(f"Life_Points:\t{Life_Points}")
+            print(f"Win_Points:\t{Win_Points}")
+        print()
+
+        
     if Life_Points <= 0:
         print("You've run out of Life Points. Game Over.")
         print("The correct answer was", hidden_word)
